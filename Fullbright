@@ -1,0 +1,32 @@
+--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+--[=[
+  sSSs   .S    S.    .S   sdSSSSSSSbs  
+ d%%SP  .SS    SS.  .SS   YSSSSSSSS%S  
+d%S'    S%S    S&S  S%S          S%S   
+S%|     S%S    d*S  S%S         S&S    
+S&S     S&S   .S*S  S&S        S&S     
+Y&Ss    S&S_sdSSS   S&S        S&S     
+`S&&S   S&S~YSSY%b  S&S       S&S      
+  `S*S  S&S    `S%  S&S      S*S       
+   l*S  S*S     S%  S*S     S*S        
+  .S*P  S*S     S&  S*S   .s*S         
+sSS*S   S*S     S&  S*S   sY*SSSSSSSP  
+YSS'    S*S     SS  S*S  sY*SSSSSSSSP  
+        SP          SP                 
+        Y           Y                  
+                                       
+]=]
+
+local Light = game:GetService("Lighting")
+
+function dofullbright()
+Light.Ambient = Color3.new(1, 1, 1)
+Light.ColorShift_Bottom = Color3.new(1, 1, 1)
+Light.ColorShift_Top = Color3.new(1, 1, 1)
+end
+
+dofullbright()
+
+Light.LightingChanged:Connect(dofullbright)

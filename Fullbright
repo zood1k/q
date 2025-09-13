@@ -1,5 +1,5 @@
 -- Загрузка сервисов
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 
@@ -16,26 +16,28 @@ local Settings = {
     GUIVisible = true
 }
 
--- Проверка загрузки Rayfield
-if not Rayfield then
-    warn("Ошибка: Rayfield не загрузился. Проверьте HTTP-запросы.")
+-- Проверка загрузки Fluent
+if not Fluent then
+    warn("Ошибка: Fluent не загрузился. Проверьте HTTP-запросы.")
     return
 end
 
--- Создание GUI с Rayfield
-local Window = Rayfield:CreateWindow({
-    Name = "Fullbright GUI",
-    LoadingTitle = "Загрузка Fullbright GUI...",
-    LoadingSubtitle = "by Grok",
-    ConfigurationSaving = { Enabled = true, FolderName = "FullbrightScript", FileName = "Config" },
-    KeySystem = false
+-- Создание GUI с Fluent
+local Window = Fluent:CreateWindow({
+    Title = "Fullbright",
+    SubTitle = "by @zood3llotgk",
+    TabWidth = 160,
+    Size = UDim2.new(0, 400, 0, 300),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.Insert
 })
 
 -- Вкладка "Основное"
-local MainTab = Window:CreateTab("Fullbright", 4483362458)
-MainTab:CreateToggle({
-    Name = "Включить Fullbright",
-    CurrentValue = false,
+local MainTab = Window:AddTab({ Title = "Fullbright", Icon = "lightbulb" })
+MainTab:AddToggle("FullbrightToggle", {
+    Title = "Включить Fullbright",
+    Default = false,
     Callback = function(Value)
         Settings.FullbrightEnabled = Value
         if Value then
@@ -49,11 +51,6 @@ MainTab:CreateToggle({
             Lighting.ColorShift_Bottom = OriginalLighting.ColorShift_Bottom
             Lighting.ColorShift_Top = OriginalLighting.ColorShift_Top
         end
-        Rayfield:Notify({
-            Title = "Fullbright",
-            Content = Value and "Fullbright включен!" or "Fullbright выключен!",
-            Duration = 3
-        })
     end
 })
 
@@ -63,5 +60,13 @@ Lighting.LightingChanged:Connect(function()
         Lighting.Ambient = Color3.new(1, 1, 1)
         Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
         Lighting.ColorShift_Top = Color3.new(1, 1, 1)
+    end
+end)
+
+-- Бинд на клавишу Insert для показа/скрытия GUI
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent and input.KeyCode == Enum.KeyCode.Insert then
+        Settings.GUIVisible = not Settings.GUIVisible
+        Fluent:ToggleWindow(Settings.GUIVisible)
     end
 end)

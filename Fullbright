@@ -1,32 +1,67 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
---[=[
-  sSSs   .S    S.    .S   sdSSSSSSSbs  
- d%%SP  .SS    SS.  .SS   YSSSSSSSS%S  
-d%S'    S%S    S&S  S%S          S%S   
-S%|     S%S    d*S  S%S         S&S    
-S&S     S&S   .S*S  S&S        S&S     
-Y&Ss    S&S_sdSSS   S&S        S&S     
-`S&&S   S&S~YSSY%b  S&S       S&S      
-  `S*S  S&S    `S%  S&S      S*S       
-   l*S  S*S     S%  S*S     S*S        
-  .S*P  S*S     S&  S*S   .s*S         
-sSS*S   S*S     S&  S*S   sY*SSSSSSSP  
-YSS'    S*S     SS  S*S  sY*SSSSSSSSP  
-        SP          SP                 
-        Y           Y                  
-                                       
-]=]
+-- Загрузка сервисов
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
 
-local Light = game:GetService("Lighting")
+-- Сохранение исходных параметров освещения
+local OriginalLighting = {
+    Ambient = Lighting.Ambient,
+    ColorShift_Bottom = Lighting.ColorShift_Bottom,
+    ColorShift_Top = Lighting.ColorShift_Top
+}
 
-function dofullbright()
-Light.Ambient = Color3.new(1, 1, 1)
-Light.ColorShift_Bottom = Color3.new(1, 1, 1)
-Light.ColorShift_Top = Color3.new(1, 1, 1)
+-- Настройки
+local Settings = {
+    FullbrightEnabled = false,
+    GUIVisible = true
+}
+
+-- Проверка загрузки Rayfield
+if not Rayfield then
+    warn("Ошибка: Rayfield не загрузился. Проверьте HTTP-запросы.")
+    return
 end
 
-dofullbright()
+-- Создание GUI с Rayfield
+local Window = Rayfield:CreateWindow({
+    Name = "Fullbright GUI",
+    LoadingTitle = "Загрузка Fullbright GUI...",
+    LoadingSubtitle = "by Grok",
+    ConfigurationSaving = { Enabled = true, FolderName = "FullbrightScript", FileName = "Config" },
+    KeySystem = false
+})
 
-Light.LightingChanged:Connect(dofullbright)
+-- Вкладка "Основное"
+local MainTab = Window:CreateTab("Fullbright", 4483362458)
+MainTab:CreateToggle({
+    Name = "Включить Fullbright",
+    CurrentValue = false,
+    Callback = function(Value)
+        Settings.FullbrightEnabled = Value
+        if Value then
+            -- Активация Fullbright
+            Lighting.Ambient = Color3.new(1, 1, 1)
+            Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
+            Lighting.ColorShift_Top = Color3.new(1, 1, 1)
+        else
+            -- Восстановление исходных параметров
+            Lighting.Ambient = OriginalLighting.Ambient
+            Lighting.ColorShift_Bottom = OriginalLighting.ColorShift_Bottom
+            Lighting.ColorShift_Top = OriginalLighting.ColorShift_Top
+        end
+        Rayfield:Notify({
+            Title = "Fullbright",
+            Content = Value and "Fullbright включен!" or "Fullbright выключен!",
+            Duration = 3
+        })
+    end
+})
+
+-- Поддержка изменений освещения
+Lighting.LightingChanged:Connect(function()
+    if Settings.FullbrightEnabled then
+        Lighting.Ambient = Color3.new(1, 1, 1)
+        Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
+        Lighting.ColorShift_Top = Color3.new(1, 1, 1)
+    end
+end)
